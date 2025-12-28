@@ -4,11 +4,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/themes/main_theme.dart';
 
 class PasswordField extends StatefulWidget {
-  const PasswordField({super.key, required this.controller, required this.hintText, required this.icon, required this.validate});
+  const PasswordField({super.key, required this.controller, required this.hintText, required this.icon, required this.validate, required this.onChanged});
   final TextEditingController controller;
   final String? Function(String?)? validate;
   final String hintText;
   final Icon icon;
+  final ValueChanged onChanged;
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
@@ -66,6 +67,7 @@ class _PasswordFieldState extends State<PasswordField> {
         ),
       ),
       validator: widget.validate,
+      onChanged: (value) => widget.onChanged(value),
     );
   }
 }

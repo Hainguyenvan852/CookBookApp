@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:recipe_finder_app/core/themes/main_theme.dart';
+import 'package:recipe_finder_app/features/auth/data/models/user_model.dart';
+import 'package:recipe_finder_app/features/view_recipe/presentation/pages/home_page.dart';
+import 'package:recipe_finder_app/features/auth/presentation/pages/profile_page.dart';
+import 'package:recipe_finder_app/features/view_recipe/presentation/pages/recipe_page.dart';
 
 class NavigatorPage extends StatefulWidget {
-  const NavigatorPage({super.key});
+  const NavigatorPage({super.key, required this.user});
+  final UserModel user;
 
   @override
   State<NavigatorPage> createState() => _NavigatorPageState();
@@ -12,13 +16,20 @@ class NavigatorPage extends StatefulWidget {
 class _NavigatorPageState extends State<NavigatorPage> {
 
   int _selectedPage = 0;
+  late final List<Widget> items;
 
-  final items = <Widget>[
-    const Center(child: Text('Home'),),
-    const Center(child: Text('Search'),),
-    const Center(child: Text('Saved'),),
-    const Center(child: Text('Profile'),),
-  ];
+  @override
+  void initState() {
+    super.initState();
+
+    items = <Widget>[
+      HomePage(user: widget.user,),
+      RecipePage(),
+      const Center(child: Text('Saved', style: TextStyle(color: Colors.white),)),
+      const ProfilePage(),
+    ];
+  }
+
 
   @override
   Widget build(BuildContext context) {

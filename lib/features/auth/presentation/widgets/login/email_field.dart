@@ -3,8 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:recipe_finder_app/core/themes/main_theme.dart';
 
 class InformationField extends StatelessWidget {
-  const InformationField({super.key, required this.controller});
+  const InformationField({super.key, required this.controller, required this.onChanged});
   final TextEditingController controller;
+  final ValueChanged<String> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +24,7 @@ class InformationField extends StatelessWidget {
           child: Center(
             child: TextFormField(
               controller: controller,
+              onChanged: (value) => onChanged(value),
               textAlignVertical: TextAlignVertical.center,
               style: TextStyle(
                 color: ColorThemes.textSecondary,

@@ -6,14 +6,26 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:recipe_finder_app/main.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+void main() async{
+
+  await dotenv.load(fileName: '.env');
+  String publicKey = dotenv.env['SUPABASE_PUBLISHABLE_KEY'] ?? '';
+  String supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
+
+  await Supabase.initialize(url: supabaseUrl, anonKey: publicKey);
+
+  SupabaseClient supabaseClient = SupabaseClient(supabaseUrl, publicKey);
+
+
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(supabaseClient: supabaseClient,));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

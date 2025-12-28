@@ -4,16 +4,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/themes/main_theme.dart';
 
 class PasswordField extends StatefulWidget {
-  const PasswordField({super.key, required this.controller, required this.hintText, required this.title});
+  const PasswordField({super.key, required this.controller, required this.hintText, required this.title, required this.onChanged});
   final TextEditingController controller;
   final String hintText, title;
+  final ValueChanged onChanged;
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
 }
 
 class _PasswordFieldState extends State<PasswordField> {
-  bool _isObscure = false;
+  bool _isObscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +52,11 @@ class _PasswordFieldState extends State<PasswordField> {
                       });
                     },
                     style: IconButton.styleFrom(splashFactory: NoSplash.splashFactory),
-                    icon: _isObscure ? Icon(Icons.visibility_off, color: ColorThemes.iconColor1,) : Icon(Icons.visibility, color: ColorThemes.iconColor1,)
+                    icon: _isObscure ? Icon(Icons.visibility, color: ColorThemes.iconColor1,) : Icon(Icons.visibility_off, color: ColorThemes.iconColor1,)
                 ),
                 contentPadding: EdgeInsets.only(left: 10),
               ),
+              onChanged: (value) => widget.onChanged(value),
             ),
           ),
         )

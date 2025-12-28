@@ -4,8 +4,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:recipe_finder_app/core/themes/main_theme.dart';
 import 'package:recipe_finder_app/features/auth/presentation/views/login_view.dart';
 
+import '../../data/repositories/auth_repository_impl.dart';
+
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, required this.authRepo});
+  final AuthRepositoryImpl authRepo;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +38,7 @@ class LoginPage extends StatelessWidget {
         ],
         actionsPadding: EdgeInsets.only(right: 12),
       ),
-      body: LoginView()
+      body: LoginView(authRepo: authRepo,)
     );
   }
 }
