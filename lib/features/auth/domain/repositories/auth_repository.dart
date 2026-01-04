@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:recipe_finder_app/features/auth/domain/cores/failure.dart';
+import 'package:recipe_finder_app/core/failure.dart';
 import 'package:recipe_finder_app/features/auth/domain/entities/user_entity.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -11,4 +11,6 @@ abstract class AuthRepository {
   Future<UserEntity> getSignedInUser(String userId);
   Stream<AuthState> get onStateChanged;
   Future<Either<Failure, ResendResponse>> resendOtp(String email);
+  Future<Either<Failure, UserResponse>> changePassword(String password);
+  Future<Either<Failure, String>> recoveryPassword(String email);
 }

@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recipe_finder_app/core/themes/main_theme.dart';
 import 'package:recipe_finder_app/features/auth/data/models/user_model.dart';
+import 'package:recipe_finder_app/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:recipe_finder_app/features/view_recipe/presentation/pages/favorite_recipe_page.dart';
 import 'package:recipe_finder_app/features/view_recipe/presentation/pages/home_page.dart';
 import 'package:recipe_finder_app/features/auth/presentation/pages/profile_page.dart';
 import 'package:recipe_finder_app/features/view_recipe/presentation/pages/recipe_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../data/datasources/favorite_remote_datasource.dart';
+import '../../data/datasources/recipe_remote_datasource.dart';
+import '../../data/repositories/recipe_repository_ipml.dart';
 
 class NavigatorPage extends StatefulWidget {
-  const NavigatorPage({super.key, required this.user});
+  const NavigatorPage({super.key, required this.user, required this.authRepo, required this.supabaseClient});
   final UserModel user;
+  final AuthRepositoryImpl authRepo;
+  final SupabaseClient supabaseClient;
 
   @override
   State<NavigatorPage> createState() => _NavigatorPageState();
@@ -23,10 +33,10 @@ class _NavigatorPageState extends State<NavigatorPage> {
     super.initState();
 
     items = <Widget>[
-      HomePage(user: widget.user,),
-      RecipePage(),
-      const Center(child: Text('Saved', style: TextStyle(color: Colors.white),)),
-      const ProfilePage(),
+      HomePage(user: widget.user, supabaseClient: widget.supabaseClient,),
+      RecipePage(user: widget.user,),
+      FavoriteRecipePage(user: widget.user,),
+      ProfilePage(currentUser: widget.user, authRepo: widget.authRepo,),
     ];
   }
 

@@ -1,28 +1,28 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../auth/data/models/user_model.dart';
 import '../../data/models/recipe_model.dart';
+import '../bloc/recipe_view_bloc.dart';
 import '../pages/recipe_detail_page.dart';
 
-class RecipeCardType4 extends StatefulWidget {
-  const RecipeCardType4({super.key, required this.recipe});
+class RecipeCardType4 extends StatelessWidget {
+  const RecipeCardType4({super.key, required this.recipe, required this.onPressed, required this.user});
   final RecipeModel recipe;
-
-  @override
-  State<RecipeCardType4> createState() => _StateProductCardType4();
-}
-
-class _StateProductCardType4 extends State<RecipeCardType4> {
-
-  bool isFavorite = false;
+  final VoidCallback onPressed;
+  final UserModel user;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => RecipeDetailPage(recipe: widget.recipe))
+          MaterialPageRoute(builder: (_) => BlocProvider.value(
+            value: context.read<RecipeViewBloc>(),
+            child: RecipeDetailPage(recipe: recipe, user: user,),
+          ))
       ),
       child: SizedBox(
         height: 240,
@@ -33,7 +33,7 @@ class _StateProductCardType4 extends State<RecipeCardType4> {
               child: ClipRRect(
                 borderRadius: BorderRadiusGeometry.circular(35),
                 child: CachedNetworkImage(
-                  imageUrl: widget.recipe.imgUrl,
+                  imageUrl: recipe.imgUrl,
                   placeholder: (context, url) =>
                       Shimmer.fromColors(
                           baseColor: Colors.grey.shade300,
@@ -51,12 +51,8 @@ class _StateProductCardType4 extends State<RecipeCardType4> {
                 right: 5,
                 top: 5,
                 child: IconButton(
-                  onPressed: (){
-                    setState(() {
-                      isFavorite = isFavorite ? false : true;
-                    });
-                  },
-                  icon: isFavorite ? Icon(Icons.favorite, color: Colors.pinkAccent, size: 20,) : Icon(Icons.favorite, color: Colors.white, size: 20,),
+                  onPressed: () => onPressed(),
+                  icon: recipe.isFavorite! ? const Icon(Icons.favorite, color: Colors.pinkAccent, size: 20,) : const Icon(Icons.favorite, color: Colors.white, size: 20,),
                   style: IconButton.styleFrom(
                       backgroundColor: Colors.black38,
                       minimumSize: Size(30, 30),

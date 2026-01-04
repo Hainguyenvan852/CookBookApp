@@ -7,6 +7,7 @@ import 'package:recipe_finder_app/features/auth/data/repositories/auth_repositor
 import 'package:recipe_finder_app/features/auth/presentation/bloc/auth_form/auth_form_bloc.dart';
 import 'package:recipe_finder_app/features/auth/presentation/bloc/auth_form/auth_form_event.dart';
 import 'package:recipe_finder_app/features/auth/presentation/bloc/auth_form/auth_form_state.dart';
+import 'package:recipe_finder_app/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:recipe_finder_app/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:recipe_finder_app/features/auth/presentation/widgets/login/background_img_and_title.dart';
 import 'package:recipe_finder_app/features/auth/presentation/widgets/login/password_field.dart';
@@ -40,7 +41,6 @@ class _LoginViewState extends State<LoginView> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -72,154 +72,155 @@ class _LoginViewState extends State<LoginView> {
             );
           },
           builder: (context, state){
-            return SingleChildScrollView(
-              physics: NeverScrollableScrollPhysics(),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    BackgroundImgAndTitle(),
-                    InformationField(
-                      onChanged: (value){
-                        context.read<AuthFormBloc>().add(EmailChanged(value));
-                      },
-                      controller: _emailController,
-                    ),
-                    PasswordField(
-                      onChanged: (value){
-                        context.read<AuthFormBloc>().add(PasswordChanged(value));
-                      },
-                      controller: _passwordController,
-                      hintText: '********',
-                      title: 'Password',
-                    ),
-                    TextButton(
-                      onPressed: (){
-
-                      },
-                      style: TextButton.styleFrom(
-                          splashFactory: NoSplash.splashFactory
+            return GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: SingleChildScrollView(
+                physics: NeverScrollableScrollPhysics(),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      BackgroundImgAndTitle(),
+                      InformationField(
+                        onChanged: (value){
+                          context.read<AuthFormBloc>().add(EmailChanged(value));
+                        },
+                        controller: _emailController,
                       ),
-                      child: Text('Forgot Password?',
-                        style: TextStyle(
-                          color: ColorThemes.textSecondary,
+                      PasswordField(
+                        onChanged: (value){
+                          context.read<AuthFormBloc>().add(PasswordChanged(value));
+                        },
+                        controller: _passwordController,
+                        hintText: '********',
+                        title: 'Password',
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPasswordScreen(authRepo: widget.authRepo,))),
+                        style: TextButton.styleFrom(
+                            splashFactory: NoSplash.splashFactory
                         ),
-                      ),
-                    ),
-                    SizedBox(height: 8.h,),
-                    Center(
-                      child: ElevatedButton(
-                          onPressed: _canSubmit ? (){
-                            _loginAction(context);
-                          } : (){},
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorThemes.primaryAccent,
-                              minimumSize: Size(double.infinity, 50.h),
-                              maximumSize: Size(double.infinity, 50.h)
-                          ),
-                          child: state.isSubmitting ? Center(child: LoadingAnimationWidget.progressiveDots(color: Colors.black, size: 30)) :
-                          Text(
-                            'Log In',
-                            style: TextStyle(
-                                fontSize: FontSizeThemes.mediumFont,
-                                fontWeight: FontWeight.bold
-                            ),
-                          )
-                      ),
-                    ),
-                    SizedBox(height: 25.h,),
-                    Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            width: 100,
-                            height: 0.5,
-                            color: ColorThemes.textSecondary,
-                          ),
-                          Text(
-                            'OR CONTINUE WITH',
-                            style: TextStyle(
-                                fontSize: FontSizeThemes.smallFont,
-                                color: ColorThemes.textSecondary
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 5),
-                            width: 100.w,
-                            height: 0.5.h,
-                            color: ColorThemes.textSecondary,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20.h,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ElevatedButton.icon(
-                          onPressed: (){},
-                          icon: Icon(FontAwesomeIcons.google, color: ColorThemes.textPrimary, size: 16,),
-                          label: Text(
-                            'Google',
-                            style: TextStyle(
-                                color: ColorThemes.textPrimary,
-                                fontSize: FontSizeThemes.regularFont
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorThemes.iconBackground,
-                              minimumSize: Size(180.w, 40.h),
-                              maximumSize: Size(200.w, 50.h)
-                          ),
-                        ),
-                        ElevatedButton.icon(
-                          onPressed: (){},
-                          icon: Icon(FontAwesomeIcons.facebook, color: ColorThemes.textPrimary, size: 16,),
-                          label: Text(
-                            'Facebook',
-                            style: TextStyle(
-                                color: ColorThemes.textPrimary,
-                                fontSize: FontSizeThemes.regularFont
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorThemes.iconBackground,
-                              minimumSize: Size(180.w, 40.h),
-                              maximumSize: Size(200.w, 50.h)
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'New to the kitchen?',
+                        child: Text('Forgot Password?',
                           style: TextStyle(
                             color: ColorThemes.textSecondary,
                           ),
                         ),
-                        TextButton(
-                            onPressed: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpPage(authRepo: widget.authRepo)));
-                            },
-                            style: TextButton.styleFrom(
-                                splashFactory: NoSplash.splashFactory
+                      ),
+                      SizedBox(height: 8.h,),
+                      Center(
+                        child: ElevatedButton(
+                            onPressed: _canSubmit ? (){
+                              _loginAction(context);
+                            } : (){},
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: ColorThemes.primaryAccent,
+                                minimumSize: Size(double.infinity, 50.h),
+                                maximumSize: Size(double.infinity, 50.h)
                             ),
-                            child: Text(
-                              'Create an account',
+                            child: state.isSubmitting ? Center(child: LoadingAnimationWidget.progressiveDots(color: Colors.black, size: 30)) :
+                            Text(
+                              'Log In',
                               style: TextStyle(
-                                color: ColorThemes.primaryAccent,
-                                fontSize: FontSizeThemes.regularFont,
-                                fontWeight: FontWeight.bold,
+                                  fontSize: FontSizeThemes.mediumFont,
+                                  fontWeight: FontWeight.bold
                               ),
                             )
-                        )
-                      ],
-                    )
-                  ],
+                        ),
+                      ),
+                      SizedBox(height: 25.h,),
+                      Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Container(
+                              width: 100,
+                              height: 0.5,
+                              color: ColorThemes.textSecondary,
+                            ),
+                            Text(
+                              'OR CONTINUE WITH',
+                              style: TextStyle(
+                                  fontSize: FontSizeThemes.smallFont,
+                                  color: ColorThemes.textSecondary
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              width: 100.w,
+                              height: 0.5.h,
+                              color: ColorThemes.textSecondary,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20.h,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: (){},
+                            icon: Icon(FontAwesomeIcons.google, color: ColorThemes.textPrimary, size: 16,),
+                            label: Text(
+                              'Google',
+                              style: TextStyle(
+                                  color: ColorThemes.textPrimary,
+                                  fontSize: FontSizeThemes.regularFont
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: ColorThemes.iconBackground,
+                                minimumSize: Size(180.w, 40.h),
+                                maximumSize: Size(200.w, 50.h)
+                            ),
+                          ),
+                          ElevatedButton.icon(
+                            onPressed: (){},
+                            icon: Icon(FontAwesomeIcons.facebook, color: ColorThemes.textPrimary, size: 16,),
+                            label: Text(
+                              'Facebook',
+                              style: TextStyle(
+                                  color: ColorThemes.textPrimary,
+                                  fontSize: FontSizeThemes.regularFont
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: ColorThemes.iconBackground,
+                                minimumSize: Size(180.w, 40.h),
+                                maximumSize: Size(200.w, 50.h)
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'New to the kitchen?',
+                            style: TextStyle(
+                              color: ColorThemes.textSecondary,
+                            ),
+                          ),
+                          TextButton(
+                              onPressed: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpPage(authRepo: widget.authRepo)));
+                              },
+                              style: TextButton.styleFrom(
+                                  splashFactory: NoSplash.splashFactory
+                              ),
+                              child: Text(
+                                'Create an account',
+                                style: TextStyle(
+                                  color: ColorThemes.primaryAccent,
+                                  fontSize: FontSizeThemes.regularFont,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                          )
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             );

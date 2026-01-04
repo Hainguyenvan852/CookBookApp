@@ -6,6 +6,11 @@ class RecipeEntity {
   final int cookingTime;
   final int serving;
   final String imgUrl;
+  final DateTime createdAt;
+  final String cookingLevel;
+  final String repast;
+  double? ratingSum;
+  bool? isFavorite;
 
   RecipeEntity({
     required this.id,
@@ -14,6 +19,11 @@ class RecipeEntity {
     required this.prepTime,
     required this.cookingTime,
     required this.serving,
-    required this.imgUrl
+    required this.imgUrl,
+    required this.createdAt,
+    this.ratingSum,
+    this.isFavorite,
+    required this.cookingLevel,
+    required this.repast,
   });
 }

@@ -1,46 +1,34 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:recipe_finder_app/core/themes/main_theme.dart';
+import 'package:recipe_finder_app/features/auth/data/models/user_model.dart';
+import 'package:recipe_finder_app/features/auth/presentation/bloc/auth_watcher/auth_watcher_bloc.dart';
+import 'package:recipe_finder_app/features/auth/presentation/bloc/auth_watcher/auth_watcher_event.dart';
+import 'package:recipe_finder_app/features/auth/presentation/pages/about_us_page.dart';
+import 'package:recipe_finder_app/features/auth/presentation/pages/change_password_page.dart';
+import 'package:shimmer/shimmer.dart';
 
-void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: ProfilePage(),
-  ));
-}
+import '../../data/repositories/auth_repository_impl.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key, required this.currentUser, required this.authRepo});
+  final UserModel currentUser;
+  final AuthRepositoryImpl authRepo;
 
-  @override
-  State<ProfilePage> createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    final Color bgColor = const Color(0xFF0C1D15);
-    final Color cardColor = const Color(0xFF162921);
-    final Color accentGreen = const Color(0xFF4ADE80);
     final Color iconBgColor = const Color(0xFF1F352A);
     final Color dangerColor = const Color(0xFF2C1B1B);
     final Color dangerText = const Color(0xFFEB5757);
 
     return Scaffold(
-      backgroundColor: bgColor,
-      appBar: AppBar(
-        backgroundColor: bgColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-          onPressed: () {},
-        ),
-        title: const Text("Cài đặt", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
-        centerTitle: true,
-      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const SizedBox(height: 10),
+            const SizedBox(height: 30),
             Center(
               child: Column(
                 children: [
@@ -52,20 +40,34 @@ class _ProfilePageState extends State<ProfilePage> {
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.grey.withOpacity(0.3)),
                         ),
-                        child: const CircleAvatar(
+                        child: CircleAvatar(
                           radius: 45,
-                          backgroundImage: NetworkImage('https://i.pravatar.cc/300'),
+                          backgroundColor: Colors.grey.shade300,
+                          child: CachedNetworkImage(
+                            imageUrl: currentUser.avatarUrl ?? '',
+                            placeholder: (context, url){
+                              return Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 250,
+                                  color: Colors.white,
+                                ),
+                              );
+                            },
+                            errorWidget: (context, url, error) => Center(child: SvgPicture.asset('lib/core/images/avatar-people.svg', height: 50,)),
+                          ),
                         ),
                       ),
                       Positioned(
-                        bottom: 0,
-                        right: 0,
+                        bottom: 0, right: 0,
                         child: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: accentGreen,
+                            color: ColorThemes.primaryAccent,
                             shape: BoxShape.circle,
-                            border: Border.all(color: bgColor, width: 2),
+                            border: Border.all(color: ColorThemes.backgroundColor, width: 2),
                           ),
                           child: const Icon(Icons.edit, color: Colors.black, size: 16),
                         ),
@@ -73,68 +75,92 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                   const SizedBox(height: 15),
-                  const Text(
-                    "Nguyễn Văn A",
+                  Text(
+                    currentUser.name,
                     style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    "nguyen.a@example.com",
+                    currentUser.email,
                     style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 14),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 50),
+            const SizedBox(height: 30),
 
-            _buildSectionTitle("HỖ TRỢ & BẢO MẬT"),
+            _buildSectionTitle("SETUP & SECURITY"),
             Container(
               decoration: BoxDecoration(
-                color: cardColor,
+                color: ColorThemes.cardBackground,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   _buildListTile(
+                      context: context,
+                      icon: Icons.language,
+                      title: "Languages",
+                      iconColor: ColorThemes.primaryAccent,
+                      iconBg: iconBgColor,
+                      showDivider: true,
+                      trailingText: "English",
+                      onTap: (){}
+                  ),
+                  _buildListTile(
+                      context: context,
                       icon: Icons.lock,
-                      title: "Đổi mật khẩu",
-                      iconColor: accentGreen,
-                      iconBg: iconBgColor, onPressed: () {  },
-                  ),
-                  Container(
-                    width: double.infinity,
-                    height: 1,
-                    color: Colors.white.withOpacity(0.05),
-                  ),
-                  _buildListTile(
-                      icon: Icons.help_outline,
-                      title: "Trung tâm trợ giúp",
-                      iconColor: accentGreen,
-                      iconBg: iconBgColor, onPressed: () {  },
-                  ),
-                  Container(
-                    width: double.infinity,
-                    height: 1,
-                    color: Colors.white.withOpacity(0.05),
-                  ),
-                  _buildListTile(
-                      icon: Icons.info_outline,
-                      title: "Về chúng tôi",
-                      iconColor: accentGreen,
-                      iconBg: iconBgColor, onPressed: () {  },
+                      title: "Change Password",
+                      iconColor: ColorThemes.primaryAccent,
+                      iconBg: iconBgColor,
+                      showDivider: false,
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePasswordPage(authRepo: authRepo, typeRequest: 1,)))
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 100),
+            const SizedBox(height: 25),
+
+            _buildSectionTitle("ABOUT & SUPPORT"),
+            Container(
+              decoration: BoxDecoration(
+                color: ColorThemes.cardBackground,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  _buildListTile(
+                      context: context,
+                      icon: Icons.help_outline,
+                      title: "Help Center",
+                      iconColor: ColorThemes.primaryAccent,
+                      iconBg: iconBgColor,
+                      showDivider: true,
+                      onTap: (){}
+                  ),
+                  _buildListTile(
+                      context: context,
+                      icon: Icons.info_outline,
+                      title: "About Us",
+                      iconColor: ColorThemes.primaryAccent,
+                      iconBg: iconBgColor,
+                      showDivider: false,
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AboutUsPage()))
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 60),
 
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  authRepo.signOut();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: dangerColor,
                   padding: const EdgeInsets.symmetric(vertical: 15),
@@ -142,6 +168,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   elevation: 0,
+                  splashFactory: NoSplash.splashFactory,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -156,8 +183,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-
-            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -178,32 +203,54 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildListTile({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required Color iconColor,
     required Color iconBg,
-    required VoidCallback onPressed
+    required bool showDivider,
+    String? trailingText,
+    required VoidCallback onTap
   }) {
     return Column(
       children: [
-        ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          leading: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: iconBg,
-              shape: BoxShape.circle,
+        Theme(
+          data: Theme.of(context).copyWith(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: iconBg,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: iconColor, size: 20),
             ),
-            child: Icon(icon, color: iconColor, size: 20),
+            title: Text(
+              title,
+              style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500),
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (trailingText != null)
+                  Text(
+                    trailingText,
+                    style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 14),
+                  ),
+                if (trailingText != null) const SizedBox(width: 8),
+                Icon(Icons.arrow_forward_ios, color: Colors.white.withOpacity(0.3), size: 14),
+              ],
+            ),
+            onTap: () => onTap(),
           ),
-          title: Text(
-            title,
-            style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500),
-          ),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.white.withOpacity(0.3), size: 14),
-          splashColor: Colors.transparent,
-          onTap: () => onPressed(),
         ),
+        if (showDivider)
+          Divider(color: Colors.white.withOpacity(0.05), height: 1, indent: 60, endIndent: 20),
       ],
     );
   }

@@ -10,7 +10,7 @@ class ColorThemes{
   static const Color iconColor1 = Color(0xFF7CA289);
   static const Color iconColor2 = Color(0xFFA5A3C8);
   static const Color textPrimary = Color(0xFFFFFFFF);
-  static const Color textSecondary = Color(0xFF97B3A0);
+  static const Color textSecondary = Color(0xFF8FB79F);
   static const Color border = Color(0xFF2D4E3B);
   static const Color inputFieldBackground2 = Color(0xFF1A2E24);
 }

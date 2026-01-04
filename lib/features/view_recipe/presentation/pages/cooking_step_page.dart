@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_finder_app/core/themes/main_theme.dart';
-import 'package:recipe_finder_app/features/view_recipe//data/models/recipe_model.dart';
 import 'package:recipe_finder_app/features/view_recipe/data/models/step_model.dart';
 import 'package:recipe_finder_app/features/view_recipe/presentation/pages/completed_cooking_page.dart';
 import 'package:shimmer/shimmer.dart';

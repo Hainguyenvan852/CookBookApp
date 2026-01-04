@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:recipe_finder_app/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:recipe_finder_app/features/auth/data/models/user_model.dart';
-import 'package:recipe_finder_app/features/auth/domain/cores/failure.dart';
+import 'package:recipe_finder_app/core/failure.dart';
 import 'package:recipe_finder_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -13,7 +13,7 @@ class AuthRepositoryImpl implements AuthRepository{
   AuthRepositoryImpl(this.dataSource,);
   
   @override
-  Stream<AuthState> get onStateChanged => dataSource.supabase.auth.onAuthStateChange;
+  Stream<AuthState> get onStateChanged => dataSource.supabaseClient.auth.onAuthStateChange;
 
   @override
   Future<Either<Failure, UserModel>> signIn(String email, String password) async{
@@ -48,6 +48,26 @@ class AuthRepositoryImpl implements AuthRepository{
   }
 
   @override
+  Future<Either<Failure, UserResponse>> changePassword(String password) async{
+    try{
+      final response = await dataSource.changePassword(password);
+      return Right(response);
+    } catch(e){
+      return Left(AuthFailure(messageFailure(e)));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> recoveryPassword(String email) async{
+    try{
+      await dataSource.recoveryPassword(email);
+      return Right('submitted');
+    } catch(e){
+      return Left(AuthFailure(messageFailure(e)));
+    }
+  }
+
+  @override
   Future<Either<Failure, AuthResponse>> verifyEmail(String email, String otpCode) async{
     try{
       final response = await dataSource.verifyEmail(email, otpCode);
@@ -79,25 +99,25 @@ String messageFailure(Object e) {
     final message = e.message.toLowerCase();
 
     if (message.contains('invalid login credentials')) {
-      return 'Email hoặc mật khẩu không chính xác.';
+      return 'Incorrect email or password.';
     }
     if (message.contains('email not confirmed')) {
-      return 'Vui lòng xác nhận email trước khi đăng nhập.';
+      return 'Please confirm your email address before logging in.';
     }
     if (message.contains('user already registered')) {
-      return 'Email này đã được đăng ký.';
+      return 'This email address has already been registered.';
     }
     if (message.contains('password should be at least')) {
-      return 'Mật khẩu quá ngắn, vui lòng nhập ít nhất 6 ký tự.';
+      return 'The password is too short; please enter at least 6 characters.';
     }
     if (message.contains('rate limit')) {
-      return 'Bạn thao tác quá nhanh. Vui lòng thử lại sau vài phút.';
+      return 'You acted too quickly. Please try again after a few minutes.';
     }
     if (message.contains('network error') || e.statusCode == '500') {
-      return 'Lỗi kết nối mạng. Vui lòng kiểm tra internet.';
+      return 'Network connection error. Please check your internet connection.';
     }
     if (message.contains('token has expired') || message.contains('invalid otp')) {
-      return 'Mã xác thực không chính xác hoặc đã hết hạn.';
+      return 'The verification code is incorrect or has expired.';
     }
     if (message.contains('already registered') || message.contains('user already exists') ) {
       return 'verify_email';

@@ -1,28 +1,28 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recipe_finder_app/core/themes/main_theme.dart';
+import 'package:recipe_finder_app/features/auth/data/models/user_model.dart';
 import 'package:recipe_finder_app/features/view_recipe/data/models/recipe_model.dart';
 import 'package:recipe_finder_app/features/view_recipe/presentation/pages/recipe_detail_page.dart';
 import 'package:shimmer/shimmer.dart';
 
-class RecipeCardType1 extends StatefulWidget {
-  const RecipeCardType1({super.key, required this.recipe});
+import '../bloc/recipe_view_bloc.dart';
+
+class RecipeCardType1 extends StatelessWidget {
+  const RecipeCardType1({super.key, required this.recipe, required this.user});
   final RecipeModel recipe;
-
-  @override
-  State<RecipeCardType1> createState() => _RecipeCardType1State();
-}
-
-class _RecipeCardType1State extends State<RecipeCardType1> {
-
-  bool isFavorite = false;
+  final UserModel user;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => RecipeDetailPage(recipe: widget.recipe))
+          MaterialPageRoute(builder: (_) => BlocProvider.value(
+            value: context.read<RecipeViewBloc>(),
+            child: RecipeDetailPage(recipe: recipe, user: user,),
+          ))
       ),
       child: Stack(
         children: [
@@ -41,7 +41,7 @@ class _RecipeCardType1State extends State<RecipeCardType1> {
                   ).createShader(bounds);
                 },
                 child: CachedNetworkImage(
-                  imageUrl: widget.recipe.imgUrl,
+                  imageUrl: recipe.imgUrl,
                   errorWidget: (context, url, error) => Center(child: Icon(Icons.error, color: Colors.white,)),
                   placeholder: (context, url){
                     return Shimmer.fromColors(
@@ -88,7 +88,7 @@ class _RecipeCardType1State extends State<RecipeCardType1> {
                           children: [
                             Icon(Icons.star, color: Colors.yellow, size: 16,),
                             Text(
-                              '4.9',
+                              recipe.ratingSum.toString(),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: FontSizeThemes.smallFont,
@@ -102,7 +102,7 @@ class _RecipeCardType1State extends State<RecipeCardType1> {
                   ),
                   SizedBox(height: 10,),
                   Text(
-                    widget.recipe.dishName,
+                    recipe.dishName,
                     maxLines: 2,
                     style: TextStyle(
                       fontSize: FontSizeThemes.bigTitleFont,
@@ -123,7 +123,7 @@ class _RecipeCardType1State extends State<RecipeCardType1> {
                 Icon(Icons.access_time_filled_rounded, color: Colors.white, size: 20,),
                 SizedBox(width: 5,),
                 Text(
-                  '${widget.recipe.prepTime + widget.recipe.cookingTime} minutes',
+                  '${recipe.prepTime + recipe.cookingTime} minutes',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: FontSizeThemes.regularFont,
@@ -134,7 +134,7 @@ class _RecipeCardType1State extends State<RecipeCardType1> {
                 Icon(Icons.local_fire_department, color: Colors.white, size: 20,),
                 SizedBox(width: 5,),
                 Text(
-                  'Easy',
+                  recipe.cookingLevel,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: FontSizeThemes.regularFont,

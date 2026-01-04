@@ -20,3 +20,5 @@ class AuthWatcherFailure extends AuthWatcherState {
   AuthWatcherFailure(this.message);
 }
 
+class RequestRecoveryPassword extends AuthWatcherState{}
+

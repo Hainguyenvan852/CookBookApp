@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_finder_app/core/themes/main_theme.dart';
-import 'package:recipe_finder_app/features/view_recipe/data/models/recipe_model.dart';
 
+import '../../data/models/recipe_model.dart';
 import 'cooking_step_page.dart';
 
 class PreparationScreen extends StatelessWidget {

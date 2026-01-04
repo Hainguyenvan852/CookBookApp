@@ -1,16 +1,25 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:recipe_finder_app/core/themes/main_theme.dart';
+import 'package:recipe_finder_app/core/themes/scroll_behavior.dart';
 import 'package:recipe_finder_app/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:recipe_finder_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:recipe_finder_app/features/auth/presentation/bloc/auth_watcher/auth_watcher_bloc.dart';
-import 'package:recipe_finder_app/features/auth/presentation/bloc/auth_watcher/auth_watcher_event.dart';
 import 'package:recipe_finder_app/features/auth/presentation/bloc/auth_watcher/auth_watcher_state.dart';
+import 'package:recipe_finder_app/features/auth/presentation/pages/change_password_page.dart';
 import 'package:recipe_finder_app/features/auth/presentation/pages/initial_page.dart';
 import 'package:recipe_finder_app/features/auth/presentation/pages/login_page.dart';
+import 'package:recipe_finder_app/features/view_recipe/data/datasources/favorite_remote_datasource.dart';
+import 'package:recipe_finder_app/features/view_recipe/data/datasources/recipe_remote_datasource.dart';
+import 'package:recipe_finder_app/features/view_recipe/data/repositories/favorite_repository_impl.dart';
+import 'package:recipe_finder_app/features/view_recipe/data/repositories/recipe_repository_ipml.dart';
+import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view_bloc.dart';
+import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view_event.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'features/view_recipe/presentation/pages/navigator_page.dart';
@@ -27,6 +36,17 @@ Future<void> main() async{
     anonKey: publicKey,
   );
 
+  PlatformDispatcher.instance.onError = (error, stack) {
+    if (error is AuthException) {
+      if (error.statusCode == 'otp_expired' || error.code == 'access_denied') {
+        print("Bắt được lỗi: Link reset password đã hết hạn!");
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   runApp(MyApp(supabaseClient: Supabase.instance.client,));
 }
 
@@ -42,12 +62,21 @@ class _MyAppState extends State<MyApp> {
 
   late final AuthRemoteDataSource _authRemoteData;
   late final AuthRepositoryImpl _authRepo;
+  late final RecipeRepositoryIpml _recipeRepo;
+  late final RecipeRemoteDataSource _recipeRemoteDataSource;
+  late final FavoriteRemoteDatasource _favoriteRemoteDatasource;
+  late final FavoriteRepositoryImpl _favoriteRepositoryImpl;
 
   @override
   void initState() {
     super.initState();
     _authRemoteData = AuthRemoteDataSource(widget.supabaseClient);
     _authRepo = AuthRepositoryImpl(_authRemoteData);
+
+    _favoriteRemoteDatasource = FavoriteRemoteDatasource(supabaseClient: widget.supabaseClient);
+    _recipeRemoteDataSource = RecipeRemoteDataSource(supabaseClient: widget.supabaseClient, favoriteDatasource: _favoriteRemoteDatasource);
+    _recipeRepo = RecipeRepositoryIpml(datasource: _recipeRemoteDataSource);
+    _favoriteRepositoryImpl = FavoriteRepositoryImpl(datasource: _favoriteRemoteDatasource);
   }
 
   @override
@@ -58,7 +87,8 @@ class _MyAppState extends State<MyApp> {
       builder: (context, child){
         return MultiRepositoryProvider(
           providers: [
-            RepositoryProvider(create: (context) => _authRepo)
+            RepositoryProvider(create: (context) => _authRepo),
+            RepositoryProvider(create: (context) => _recipeRepo)
           ],
           child: MultiBlocProvider(
               providers: [
@@ -66,6 +96,7 @@ class _MyAppState extends State<MyApp> {
               ],
               child: SafeArea(
                   child: MaterialApp(
+                    scrollBehavior: NoStretchBehavior(),
                     debugShowCheckedModeBanner: false,
                     theme: AppThemes.mainTheme,
                     title: 'Cookbook App',
@@ -87,10 +118,16 @@ class _MyAppState extends State<MyApp> {
                             return InitialPage();
                           }
                           else if(state is Authenticated){
-                            return NavigatorPage(user: state.user,);
+                            return BlocProvider(
+                                create: (context) => RecipeViewBloc(recipeRepo: _recipeRepo, userId: state.user.id, favoriteRepo: _favoriteRepositoryImpl)..add(LoadRecipe()),
+                                child: NavigatorPage(user: state.user, authRepo: _authRepo, supabaseClient: widget.supabaseClient,)
+                            );
                           }
                           else if(state is Unauthenticated){
                             return LoginPage(authRepo: _authRepo,);
+                          }
+                          else if(state is RequestRecoveryPassword){
+                            return ChangePasswordPage(authRepo: _authRepo, typeRequest: 0,);
                           }
                           else if(state is AuthWatcherFailure){
                             return LoginPage(authRepo: _authRepo,);

@@ -158,7 +158,7 @@ class CompletionScreen extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(vertical: 18),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                               ),
-                              child: const Text("View Recipe", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                              child: const Text("Submit", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                             ),
                           ),
                           const SizedBox(width: 15),

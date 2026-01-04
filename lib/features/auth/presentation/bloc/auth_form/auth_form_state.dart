@@ -1,9 +1,10 @@
 import 'package:dartz/dartz.dart';
-import 'package:recipe_finder_app/features/auth/domain/cores/failure.dart';
+import 'package:recipe_finder_app/core/failure.dart';
 
 class AuthFormState {
   String email;
   String password;
+  String? newPassword;
   String? fullName;
   bool isSubmitting;
   Option<Either<Failure, Object>> authFailureOrSuccessOption;
@@ -17,7 +18,7 @@ class AuthFormState {
     required this.authFailureOrSuccessOption,
     required this.signUpStepSuccess,
     this.otpCode,
-    this.fullName
+    this.fullName,
   });
 
   factory AuthFormState.initial() => AuthFormState(
@@ -45,7 +46,7 @@ class AuthFormState {
           otpCode: otpCode ?? this.otpCode,
           email: email ?? this.email,
           password: password ?? this.password,
-          fullName: fullName ?? this.fullName
+          fullName: fullName ?? this.fullName,
       );
 }
 

@@ -1,22 +1,33 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recipe_finder_app/core/themes/main_theme.dart';
+import 'package:recipe_finder_app/features/auth/data/models/user_model.dart';
 import 'package:recipe_finder_app/features/view_recipe/presentation/pages/preparation_step_page.dart';
 import 'package:recipe_finder_app/features/view_recipe/data/models/recipe_model.dart';
 
+import '../../data/models/favorite_model.dart';
+import '../bloc/recipe_view_bloc.dart';
+import '../bloc/recipe_view_event.dart';
+
 class RecipeDetailPage extends StatefulWidget {
-  const RecipeDetailPage({super.key, required this.recipe});
+  const RecipeDetailPage({super.key, required this.recipe, required this.user});
   final RecipeModel recipe;
+  final UserModel user;
 
   @override
   State<RecipeDetailPage> createState() => _RecipeDetailPageState();
 }
 
 class _RecipeDetailPageState extends State<RecipeDetailPage> {
+  late bool isFavorite;
 
-  final Color backgroundColor = const Color(0xFF0C1D15);
-  final Color cardColor = const Color(0xFF162921);
-  final Color accentGreen = const Color(0xFF4ADE80);
+
+  @override
+  void initState() {
+    super.initState();
+    isFavorite = widget.recipe.isFavorite!;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,10 +95,24 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                         ),
                         const SizedBox(width: 10),
                         CircleAvatar(
-                          backgroundColor: Colors.white,
+                          backgroundColor: Colors.black38,
                           child: IconButton(
-                            icon: Icon(Icons.favorite, color: Colors.red),
-                            onPressed: () {},
+                            icon: isFavorite ? const Icon(Icons.favorite, color: Colors.pinkAccent) : const Icon(Icons.favorite, color: Colors.white),
+                            onPressed: (){
+                              if(isFavorite){
+                                setState(() {
+                                  isFavorite = false;
+                                });
+                                final favorite = FavoriteModel(userId: widget.user.id, recipeId: widget.recipe.id);
+                                context.read<RecipeViewBloc>().add(NoFavoritePressed(favoriteModel: favorite));
+                              }else{
+                                setState(() {
+                                  isFavorite = true;
+                                });
+                                final favorite = FavoriteModel(userId: widget.user.id, recipeId: widget.recipe.id);
+                                context.read<RecipeViewBloc>().add(FavoritePressed(favoriteModel: favorite));
+                              }
+                            },
                           ),
                         ),
                       ],
@@ -151,10 +176,10 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                   ),
                   const SizedBox(height: 15),
 
-                  _buildIngredientItem("Rice Noodles", "500g, flat dry style", cardColor),
-                  _buildIngredientItem("Beef Sirloin", "200g, thinly sliced", cardColor),
-                  _buildIngredientItem("White Onion", "1 large, sliced", cardColor),
-                  _buildIngredientItem("Fresh Ginger", "3 inch piece, charred", cardColor),
+                  _buildIngredientItem("Rice Noodles", "500g, flat dry style", ColorThemes.cardBackground),
+                  _buildIngredientItem("Beef Sirloin", "200g, thinly sliced", ColorThemes.cardBackground),
+                  _buildIngredientItem("White Onion", "1 large, sliced", ColorThemes.cardBackground),
+                  _buildIngredientItem("Fresh Ginger", "3 inch piece, charred", ColorThemes.cardBackground),
 
                   const SizedBox(height: 30),
                   const Text("Instructions", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
@@ -164,24 +189,24 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                     step: "1",
                     title: "Prepare the Broth",
                     description: "Char the onion and ginger over an open flame until blackened. Simmer beef bones...",
-                    cardColor: cardColor,
-                    accentColor: accentGreen,
+                    cardColor: ColorThemes.cardBackground,
+                    accentColor: ColorThemes.primaryAccent,
                     isLast: false,
                   ),
                   _buildInstructionStep(
                     step: "2",
                     title: "Blanch Noodles",
                     description: "Boil the rice noodles according to package instructions until al dente...",
-                    cardColor: cardColor,
-                    accentColor: accentGreen,
+                    cardColor: ColorThemes.cardBackground,
+                    accentColor: ColorThemes.primaryAccent,
                     isLast: false,
                   ),
                   _buildInstructionStep(
                     step: "3",
                     title: "Assemble & Serve",
                     description: "Place noodles in a bowl, top with raw beef slices. Pour boiling hot broth directly...",
-                    cardColor: cardColor,
-                    accentColor: accentGreen,
+                    cardColor: ColorThemes.cardBackground,
+                    accentColor: ColorThemes.primaryAccent,
                     isLast: true,
                   ),
                   const SizedBox(height: 20),

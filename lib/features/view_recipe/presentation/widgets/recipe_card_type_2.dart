@@ -1,21 +1,28 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recipe_finder_app/core/themes/main_theme.dart';
+import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../auth/data/models/user_model.dart';
 import '../../data/models/recipe_model.dart';
 import '../pages/recipe_detail_page.dart';
 
 class RecipeCardType2 extends StatelessWidget {
-  const RecipeCardType2({super.key, required this.recipe});
+  const RecipeCardType2({super.key, required this.recipe, required this.user});
   final RecipeModel recipe;
+  final UserModel user;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => RecipeDetailPage(recipe: recipe))
+          MaterialPageRoute(builder: (_) => BlocProvider.value(
+            value: context.read<RecipeViewBloc>(),
+            child: RecipeDetailPage(recipe: recipe, user: user,),
+          ))
       ),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -53,10 +60,11 @@ class RecipeCardType2 extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
+                  overflow: TextOverflow.ellipsis,
                   recipe.dishName,
                   style: TextStyle(
                     color: ColorThemes.textPrimary,
-                    fontSize: FontSizeThemes.mediumFont,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold
                   ),
                 ),
@@ -88,7 +96,7 @@ class RecipeCardType2 extends StatelessWidget {
                     SizedBox(width: 20,),
                     Icon(Icons.star, color: ColorThemes.iconColor1, size: 18,),
                     Text(
-                      '4.9',
+                      recipe.cookingLevel,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: FontSizeThemes.smallFont,

@@ -66,6 +66,7 @@ flutter:
     - lib/core/images/login-image.png
     - lib/core/images/login-image-2.png
     - lib/core/images/login-image-3.png
+    - lib/core/images/avatar-people.svg
 
   # fonts:
   #   - family: Schyler
