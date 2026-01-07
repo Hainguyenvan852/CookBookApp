@@ -2,7 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:recipe_finder_app/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:recipe_finder_app/features/auth/data/models/user_model.dart';
-import 'package:recipe_finder_app/core/failure.dart';
+import 'package:recipe_finder_app/core/errors/failure.dart';
+import 'package:recipe_finder_app/features/auth/domain/entities/user_entity.dart';
 import 'package:recipe_finder_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -16,9 +17,9 @@ class AuthRepositoryImpl implements AuthRepository{
   Stream<AuthState> get onStateChanged => dataSource.supabaseClient.auth.onAuthStateChange;
 
   @override
-  Future<Either<Failure, UserModel>> signIn(String email, String password) async{
+  Future<Either<Failure, UserModel>> signInWithEmail(String email, String password) async{
     try{
-      final userProfile = await dataSource.signIn(email, password);
+      final userProfile = await dataSource.signInWithEmail(email, password);
 
       return Right(userProfile);
     } catch (e){
@@ -92,6 +93,16 @@ class AuthRepositoryImpl implements AuthRepository{
       return Left(AuthFailure(messageFailure(e)));
     }
   }
+
+  @override
+  Future<Either<Failure, UserModel>> signInWithGoogle() async{
+    try{
+      final response = await dataSource.signInWithGoogle();
+      return Right(response);
+    } catch(e) {
+      return Left(AuthFailure(e.toString()));
+    }
+  }
 }
 
 String messageFailure(Object e) {
@@ -121,6 +132,9 @@ String messageFailure(Object e) {
     }
     if (message.contains('already registered') || message.contains('user already exists') ) {
       return 'verify_email';
+    }
+    if (message.contains('failed to sign in with google')) {
+      return 'Sign in failed';
     }
 
     return e.message;

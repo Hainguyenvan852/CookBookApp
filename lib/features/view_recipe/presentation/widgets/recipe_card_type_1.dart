@@ -6,13 +6,15 @@ import 'package:recipe_finder_app/features/auth/data/models/user_model.dart';
 import 'package:recipe_finder_app/features/view_recipe/data/models/recipe_model.dart';
 import 'package:recipe_finder_app/features/view_recipe/presentation/pages/recipe_detail_page.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../bloc/recipe_view_bloc.dart';
+import '../bloc/recipe_view/recipe_view_bloc.dart';
 
 class RecipeCardType1 extends StatelessWidget {
-  const RecipeCardType1({super.key, required this.recipe, required this.user});
+  const RecipeCardType1({super.key, required this.recipe, required this.user, required this.supabaseClient});
   final RecipeModel recipe;
   final UserModel user;
+  final SupabaseClient supabaseClient;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class RecipeCardType1 extends StatelessWidget {
           context,
           MaterialPageRoute(builder: (_) => BlocProvider.value(
             value: context.read<RecipeViewBloc>(),
-            child: RecipeDetailPage(recipe: recipe, user: user,),
+            child: RecipeDetailPage(recipe: recipe, user: user, supabaseClient: supabaseClient,),
           ))
       ),
       child: Stack(

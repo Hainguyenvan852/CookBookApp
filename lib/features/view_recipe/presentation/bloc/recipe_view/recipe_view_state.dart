@@ -6,6 +6,7 @@ class RecipeViewState {
   List<RecipeModel> todayRecipeList;
   List<RecipeModel> favoriteList;
   List<RecipeModel> newlyRecipeList;
+  List<RecipeModel> favoriteListByFilter;
   String? error;
 
   RecipeViewState({
@@ -14,6 +15,7 @@ class RecipeViewState {
     required this.newlyRecipeList,
     required this.favoriteList,
     required this.todayRecipeList,
+    required this.favoriteListByFilter,
     this.error
   });
 
@@ -22,7 +24,8 @@ class RecipeViewState {
       allRecipeList: [],
       newlyRecipeList: [],
       favoriteList: [],
-      todayRecipeList: []
+      todayRecipeList: [],
+      favoriteListByFilter: []
   );
 
   RecipeViewState copyWith({
@@ -31,6 +34,7 @@ class RecipeViewState {
     List<RecipeModel>? favoriteList,
     List<RecipeModel>? newlyRecipeList,
     List<RecipeModel>? todayRecipeList,
+    List<RecipeModel>? favoriteListByFilter,
     String? error
   }) => RecipeViewState(
     isLoading: isLoading ?? this.isLoading,
@@ -38,6 +42,7 @@ class RecipeViewState {
     newlyRecipeList: newlyRecipeList ?? this.newlyRecipeList,
     favoriteList: favoriteList ?? this.favoriteList,
     todayRecipeList: todayRecipeList ?? this.todayRecipeList,
+    favoriteListByFilter: favoriteListByFilter ?? this.favoriteListByFilter,
     error: error ?? this.error
   );
 }

@@ -29,10 +29,19 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState>{
       authRepo.resendOtp(event.email);
     });
 
-    on<SignInPressed>((event, emit) async{
+    on<SignInPressedWithEmail>((event, emit) async{
       emit(state.copyWith(isSubmitting: true));
 
-      final failOrSuccess = await authRepo.signIn(state.email.trim(), state.password.trim());
+      final failOrSuccess = await authRepo.signInWithEmail(state.email.trim(), state.password.trim());
+
+      emit(state.copyWith(isSubmitting: false, authFailureOrSuccessOption: some(failOrSuccess)));
+      emit(state.copyWith(isSubmitting: false, authFailureOrSuccessOption: none()));
+    });
+
+    on<SignInPressedWithGoogle>((event, emit) async{
+      emit(state.copyWith(isSubmitting: true));
+
+      final failOrSuccess = await authRepo.signInWithGoogle();
 
       emit(state.copyWith(isSubmitting: false, authFailureOrSuccessOption: some(failOrSuccess)));
       emit(state.copyWith(isSubmitting: false, authFailureOrSuccessOption: none()));

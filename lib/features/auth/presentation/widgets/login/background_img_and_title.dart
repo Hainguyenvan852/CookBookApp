@@ -29,7 +29,7 @@ class BackgroundImgAndTitle extends StatelessWidget {
                     stops: [0.6, 1]
                 ).createShader(rect);
               },
-              child: Image.asset('lib/core/images/login-image-2.png',
+              child: Image.asset('lib/assets/images/login-image-2.png',
                 fit: BoxFit.fill,
               ),
             ),

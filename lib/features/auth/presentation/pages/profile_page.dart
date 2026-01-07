@@ -1,21 +1,36 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:recipe_finder_app/core/themes/main_theme.dart';
 import 'package:recipe_finder_app/features/auth/data/models/user_model.dart';
-import 'package:recipe_finder_app/features/auth/presentation/bloc/auth_watcher/auth_watcher_bloc.dart';
-import 'package:recipe_finder_app/features/auth/presentation/bloc/auth_watcher/auth_watcher_event.dart';
 import 'package:recipe_finder_app/features/auth/presentation/pages/about_us_page.dart';
 import 'package:recipe_finder_app/features/auth/presentation/pages/change_password_page.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../data/repositories/auth_repository_impl.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key, required this.currentUser, required this.authRepo});
   final UserModel currentUser;
   final AuthRepositoryImpl authRepo;
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+
+  File? galleryFile;
+  final picker = ImagePicker();
+
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,56 +47,58 @@ class ProfilePage extends StatelessWidget {
             Center(
               child: Column(
                 children: [
-                  Stack(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey.withOpacity(0.3)),
-                        ),
-                        child: CircleAvatar(
-                          radius: 45,
-                          backgroundColor: Colors.grey.shade300,
-                          child: CachedNetworkImage(
-                            imageUrl: currentUser.avatarUrl ?? '',
-                            placeholder: (context, url){
-                              return Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[100]!,
-                                child: Container(
-                                  width: double.infinity,
-                                  height: 250,
-                                  color: Colors.white,
-                                ),
-                              );
-                            },
-                            errorWidget: (context, url, error) => Center(child: SvgPicture.asset('lib/core/images/avatar-people.svg', height: 50,)),
+                  GestureDetector(
+                    onTap: (){
+                      _showPickerGallery(context: context);
+                    },
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          height: 100,
+                          width: 100,
+                          child: ClipRRect(
+                            borderRadius: BorderRadiusGeometry.circular(50),
+                            child: (galleryFile == null) ? CachedNetworkImage(
+                              imageUrl: widget.currentUser.avatarUrl ?? '',
+                              fit: BoxFit.cover,
+                              placeholder: (context, url){
+                                return Shimmer.fromColors(
+                                  baseColor: Colors.grey[300]!,
+                                  highlightColor: Colors.grey[100]!,
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 250,
+                                    color: Colors.white,
+                                  ),
+                                );
+                              },
+                              errorWidget: (context, url, error) => Center(child: SvgPicture.asset('lib/assets/images/avatar-people.svg', height: 50,)),
+                            ) : Image.file(galleryFile!, fit: BoxFit.cover,),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        bottom: 0, right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: ColorThemes.primaryAccent,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: ColorThemes.backgroundColor, width: 2),
+                        Positioned(
+                          bottom: 0, right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: ColorThemes.primaryAccent,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: ColorThemes.backgroundColor, width: 2),
+                            ),
+                            child: const Icon(Icons.edit, color: Colors.black, size: 16),
                           ),
-                          child: const Icon(Icons.edit, color: Colors.black, size: 16),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 15),
                   Text(
-                    currentUser.name,
+                    widget.currentUser.name,
                     style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    currentUser.email,
+                    widget.currentUser.email,
                     style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 14),
                   ),
                 ],
@@ -115,7 +132,7 @@ class ProfilePage extends StatelessWidget {
                       iconColor: ColorThemes.primaryAccent,
                       iconBg: iconBgColor,
                       showDivider: false,
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePasswordPage(authRepo: authRepo, typeRequest: 1,)))
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePasswordPage(authRepo: widget.authRepo, typeRequest: 1,)))
                   ),
                 ],
               ),
@@ -159,7 +176,7 @@ class ProfilePage extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  authRepo.signOut();
+                  widget.authRepo.signOut();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: dangerColor,
@@ -254,4 +271,55 @@ class ProfilePage extends StatelessWidget {
       ],
     );
   }
+
+  void _showPickerGallery({
+    required BuildContext context
+  }) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Photo Library'),
+                onTap: () {
+                  getImage(ImageSource.gallery);
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Camera'),
+                onTap: () {
+                  getImage(ImageSource.camera);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future getImage(
+    ImageSource img,
+  ) async {
+    final pickedFile = await picker.pickImage(source: img);
+    XFile? xfilePick = pickedFile;
+    setState(
+      () {
+        if (xfilePick != null) {
+          galleryFile = File(pickedFile!.path);
+        } else {
+
+        }
+      },
+    );
+  }
 }
+
+
+

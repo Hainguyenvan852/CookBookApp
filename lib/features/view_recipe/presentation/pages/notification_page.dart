@@ -43,24 +43,21 @@ class NotificationPage extends StatelessWidget {
             _buildFoodNotification(
               imageUrl: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?q=80&w=1000',
               title: "Món phở bò mới!",
-              chefName: "Chef Tuấn",
-              actionText: "vừa đăng một công thức Phở Đặc Biệt mới. Hãy xem ngay!",
+              content: "Công thức Phở đặc biệt mới. Hãy xem ngay!",
               time: "2p",
               isNew: true,
             ),
             _buildFoodNotification(
               imageUrl: 'https://images.unsplash.com/photo-1585325701165-351af916e581?q=80&w=1000',
               title: "Bún chả Hà Nội!",
-              chefName: "Chef Lan",
-              actionText: "đã chia sẻ bí quyết nước chấm thần thánh. Đừng bỏ lỡ!",
+              content: "Công thức Bún chả Hà Nội mới. Hãy xem ngay!. Đừng bỏ lỡ!",
               time: "15p",
               isNew: true,
             ),
             _buildFoodNotification(
               imageUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000',
               title: "Cơm tấm sườn bì!",
-              chefName: "MasterChef Hùng",
-              actionText: "vừa cập nhật công thức ướp sườn nướng mật ong.",
+              content: "Công thức cơm tấm sườn bì vừa được cập nhật. Hãy xem ngay!",
               time: "45p",
               isNew: true,
             ),
@@ -70,34 +67,30 @@ class NotificationPage extends StatelessWidget {
             _buildSectionHeader("TRƯỚC ĐÓ"),
 
             _buildFoodNotification(
-              imageUrl: 'https://images.unsplash.com/photo-1626804475297-411dbe6312a7?q=80&w=1000',
+              imageUrl: 'https://statics.vinwonders.com/banh-mi-chao-ha-noi-so-1_1680981247.jpg',
               title: "Bánh mì chảo",
-              chefName: "Bếp Nhà Mẹ",
-              actionText: "đã đăng tải video hướng dẫn làm pate gan tại nhà.",
+              content: "Công thức Bánh mì chảo mới. Hãy xem ngay!.",
               time: "2h",
               isNew: false,
             ),
             _buildFoodNotification(
               imageUrl: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?q=80&w=1000',
               title: "Mỳ Ý Carbonara",
-              chefName: "Gordon R.",
-              actionText: "giới thiệu cách làm sốt kem trứng chuẩn Ý.",
+              content: "Công thức Mỳ Ý Carbonara giới thiệu cách làm sốt kem trứng chuẩn Ý.",
               time: "5h",
               isNew: false,
             ),
             _buildFoodNotification(
               imageUrl: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=1000',
               title: "Salad nhiệt đới",
-              chefName: "Healthy Food",
-              actionText: "chia sẻ thực đơn giảm cân cho tuần mới.",
+              content: "Salad nhiệt đới thực đơn giảm cân cho tuần mới.",
               time: "1d",
               isNew: false,
             ),
             _buildFoodNotification(
               imageUrl: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=1000',
               title: "Cocktail Mùa Hè",
-              chefName: "Barista Huy",
-              actionText: "vừa thêm công thức pha chế Mojito giải nhiệt.",
+              content: "Cocktail Mùa Hè công thức pha chế Mojito giải nhiệt.",
               time: "2d",
               isNew: false,
             ),
@@ -127,8 +120,7 @@ class NotificationPage extends StatelessWidget {
   Widget _buildFoodNotification({
     required String imageUrl,
     required String title,
-    required String chefName,
-    required String actionText,
+    required String content,
     required String time,
     required bool isNew,
   }) {
@@ -214,19 +206,10 @@ class NotificationPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 4),
-                RichText(
-                  text: TextSpan(
-                    style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13, height: 1.4),
-                    children: [
-                      TextSpan(
-                        text: chefName,
-                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                      const TextSpan(text: " "),
-                      TextSpan(text: actionText),
-                    ],
-                  ),
-                ),
+                Text(
+                  content,
+                  style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 13, height: 1.4),
+                )
               ],
             ),
           ),

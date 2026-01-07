@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:recipe_finder_app/core/failure.dart';
+import 'package:recipe_finder_app/core/errors/failure.dart';
 import 'package:recipe_finder_app/features/view_recipe/data/datasources/favorite_remote_datasource.dart';
 import 'package:recipe_finder_app/features/view_recipe/data/models/favorite_model.dart';
 import 'package:recipe_finder_app/features/view_recipe/domain/repositories/favorite_repository.dart';

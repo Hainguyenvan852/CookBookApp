@@ -34,8 +34,8 @@ class _NavigatorPageState extends State<NavigatorPage> {
 
     items = <Widget>[
       HomePage(user: widget.user, supabaseClient: widget.supabaseClient,),
-      RecipePage(user: widget.user,),
-      FavoriteRecipePage(user: widget.user,),
+      RecipePage(user: widget.user, supabaseClient: widget.supabaseClient,),
+      FavoriteRecipePage(user: widget.user, supabaseClient: widget.supabaseClient,),
       ProfilePage(currentUser: widget.user, authRepo: widget.authRepo,),
     ];
   }

@@ -10,45 +10,15 @@ import 'package:shimmer/shimmer.dart';
 import '../../data/models/recipe_model.dart';
 
 class CookingModeScreen extends StatefulWidget {
-  const CookingModeScreen({super.key, required this.recipe,});
+  const CookingModeScreen({super.key, required this.recipe, required this.stepList,});
   final RecipeModel recipe;
+  final List<StepModel> stepList;
 
   @override
   State<CookingModeScreen> createState() => _CookingModeScreenState();
 }
 
 class _CookingModeScreenState extends State<CookingModeScreen> {
-
-  List<StepModel> steps = [
-    StepModel(
-        id: 1,
-        title: 'Prepare the Dough',
-        instruction: 'Heat the oven to 200C/fan 180C/gas. Mix the sugar into the bread mix in a large bowl, '
-            'then add water as instructed on the pack. Bring the dough together with a wooden spoon, then knead '
-            'on a lightly floured surface for 5 mins until smooth. Put into a large bowl, cover with oiled cling '
-            'film then leave in a warm place until doubled in size.',
-        stepNumber: 1
-    ),
-    StepModel(
-        id: 2,
-        title: 'Make the Filling',
-        instruction: 'Meanwhile, heat the oil in a pan, then fry the bacon until crisp, about 5 mins. Add the '
-            'ginger and garlic and fry for 1 min until soft, then tip in the soy, honey and tomato purée and '
-            'stir well. Can be made up to 3 days ahead.',
-        stepNumber: 2
-    ),
-    StepModel(
-        id: 3,
-        title: 'Assemble and Bake',
-        instruction: 'Turn out the dough and knead briefly, then pull into 12 even-sized balls. Flatten with '
-            'your hands, then put a teaspoon-size blob of the filling in the middle. Draw the dough up and pinch '
-            'it closed like a purse, then turn the bun over and sit it on a large baking sheet. Cover with oiled '
-            'cling film and leave to rise for about 30 mins until the dough feels pillowy. Brush with egg and bake '
-            'for 20 mins until golden. Serve warm with dipping sauce. Can be frozen after second rise for up to 1 '
-            'month or baked up to a day ahead and re-warmed.',
-        stepNumber: 3
-    ),
-  ];
 
   late StepModel currentStep;
   late int totalSteps;
@@ -58,15 +28,15 @@ class _CookingModeScreenState extends State<CookingModeScreen> {
   @override
   void initState() {
     super.initState();
-    currentStep = steps[currentIndex];
-    totalSteps = steps.length;
+    currentStep = widget.stepList[currentIndex];
+    totalSteps = widget.stepList.length;
   }
 
   void _nextStep() {
     if (currentStep.stepNumber < totalSteps) {
       setState(() {
         currentIndex ++;
-        currentStep = steps[currentIndex];
+        currentStep = widget.stepList[currentIndex];
       });
     }
   }
@@ -75,7 +45,7 @@ class _CookingModeScreenState extends State<CookingModeScreen> {
     if (currentStep.stepNumber > 1) {
       setState(() {
         currentIndex --;
-        currentStep = steps[currentIndex];
+        currentStep = widget.stepList[currentIndex];
       });
     }
   }
@@ -286,12 +256,12 @@ class _CookingModeScreenState extends State<CookingModeScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
             icon: const Icon(Icons.close, color: Colors.white),
             onPressed: () => Navigator.pop(context),
           ),
+          const SizedBox(width: 105,),
           Column(
             children: [
               Text(
@@ -305,10 +275,10 @@ class _CookingModeScreenState extends State<CookingModeScreen> {
               ),
             ],
           ),
-          IconButton(
-            icon: const Icon(Icons.list, color: Colors.white),
-            onPressed: () {},
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.list, color: Colors.white),
+          //   onPressed: () {},
+          // ),
         ],
       ),
     );

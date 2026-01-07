@@ -3,12 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recipe_finder_app/core/themes/main_theme.dart';
 import 'package:recipe_finder_app/features/auth/data/models/user_model.dart';
 import 'package:recipe_finder_app/features/view_recipe/data/models/recipe_model.dart';
-import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view_bloc.dart';
-import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view_state.dart';
+import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view/recipe_view_bloc.dart';
 import 'package:recipe_finder_app/features/view_recipe/presentation/pages/notification_page.dart';
+import 'package:recipe_finder_app/features/view_recipe/presentation/pages/skeleton_loading_page.dart';
 import 'package:recipe_finder_app/features/view_recipe/presentation/widgets/recipe_card_type_1.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../bloc/recipe_view/recipe_view_state.dart';
 import '../widgets/recipe_card_type_2.dart';
 import '../widgets/recipe_card_type_3.dart';
 
@@ -25,35 +26,28 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body:CustomScrollView(
-        slivers: [
-          _buildAppBar(),
-          SliverToBoxAdapter(
-            child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                child: BlocBuilder<RecipeViewBloc, RecipeViewState>(
-                    builder: (context, state){
-                      if(state.isLoading){
-                        return SizedBox(
-                          height: 600,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: ColorThemes.primaryAccent,
-                            ),
-                          ),
-                        );
-                      }
+    return BlocBuilder<RecipeViewBloc, RecipeViewState>(
+        builder: (context, state){
+          if(state.isLoading){
+            return HomeShimmer();
+          }
 
-                      if(state.error != null){
-                        return SizedBox(
-                          height: 400,
-                          child: Center(
-                            child: Text(state.error!),
-                          ),
-                        );
-                      }
-                      return Builder(
+          if(state.error != null){
+            return SizedBox(
+              height: 400,
+              child: Center(
+                child: Text(state.error!),
+              ),
+            );
+          }
+          return Scaffold(
+            body:CustomScrollView(
+              slivers: [
+                _buildAppBar(),
+                SliverToBoxAdapter(
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      child: Builder(
                           builder: (context) {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,13 +79,13 @@ class _HomePageState extends State<HomePage> {
                               ],
                             );
                           }
-                      );
-                    }
+                      )
+                  ),
                 )
+              ],
             ),
-          )
-        ],
-      ),
+          );
+        }
     );
   }
 
@@ -152,7 +146,7 @@ class _HomePageState extends State<HomePage> {
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index){
-                return RecipeCardType1(recipe: recipeList[index], user: widget.user,);
+                return RecipeCardType1(recipe: recipeList[index], user: widget.user, supabaseClient: widget.supabaseClient,);
               },
               separatorBuilder: (context, index){
                 return const SizedBox(width: 15,);
@@ -220,6 +214,7 @@ class _HomePageState extends State<HomePage> {
                     RecipeCardType3(
                       recipe: recipeList[index],
                       user: widget.user,
+                      supabaseClient: widget.supabaseClient,
                     ),
                     SizedBox(height: 10,),
                     SizedBox(
@@ -304,6 +299,7 @@ class _HomePageState extends State<HomePage> {
               return RecipeCardType2(
                 recipe: recipeList[index],
                 user: widget.user,
+                supabaseClient: widget.supabaseClient,
               );
             },
             separatorBuilder: (context, index){

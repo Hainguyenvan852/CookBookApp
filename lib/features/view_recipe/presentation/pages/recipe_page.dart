@@ -5,16 +5,18 @@ import 'package:flutter_svg/svg.dart';
 import 'package:recipe_finder_app/features/auth/data/models/user_model.dart';
 import 'package:recipe_finder_app/features/view_recipe/data/models/recipe_model.dart';
 import 'package:recipe_finder_app/features/view_recipe/presentation/widgets/recipe_card_type_4.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/themes/main_theme.dart';
 import '../../data/models/favorite_model.dart';
-import '../bloc/recipe_view_bloc.dart';
-import '../bloc/recipe_view_event.dart';
-import '../bloc/recipe_view_state.dart';
+import '../bloc/recipe_view/recipe_view_bloc.dart';
+import '../bloc/recipe_view/recipe_view_event.dart';
+import '../bloc/recipe_view/recipe_view_state.dart';
 
 class RecipePage extends StatefulWidget {
-  const RecipePage({super.key, required this.user});
+  const RecipePage({super.key, required this.user, required this.supabaseClient});
   final UserModel user;
+  final SupabaseClient supabaseClient;
 
   @override
   State<RecipePage> createState() => _RecipePageState();
@@ -63,36 +65,35 @@ class _RecipePageState extends State<RecipePage> {
                     shape: BoxShape.circle,
                     color: ColorThemes.cardBackground
                   ),
-                  child: SvgPicture.asset("lib/core/icons/chef-hat.svg", width: 35,)
+                  child: SvgPicture.asset("lib/assets/icons/chef-hat.svg", width: 35,)
                 ),
               ],
             ),
             const SizedBox(height: 20,),
-            TextFormField(
-              cursorColor: Colors.white,
-              style: TextStyle(
-                color: Colors.white
-              ),
-              decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    borderSide: BorderSide(color: Colors.transparent, width: 1),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    borderSide: BorderSide(color: Colors.transparent, width: 1),
-                  ),
-                fillColor: ColorThemes.inputFieldBackground2,
-                filled: true,
-                hintText: 'Search recipes . . .',
-                hintStyle: TextStyle(
-                  color: ColorThemes.textSecondary,
-                  fontSize: FontSizeThemes.mediumFont
-                ),
-                prefixIcon: Icon(Icons.search_rounded, color: ColorThemes.primaryAccent,),
-                suffixIcon: IconButton(onPressed: (){}, icon: Icon(Icons.mic, color: ColorThemes.textSecondary,))
-              ),
-            ),
+            // TextFormField(
+            //   cursorColor: Colors.white,
+            //   style: TextStyle(
+            //     color: Colors.white
+            //   ),
+            //   decoration: InputDecoration(
+            //       enabledBorder: OutlineInputBorder(
+            //         borderRadius: BorderRadius.circular(50),
+            //         borderSide: BorderSide(color: Colors.transparent, width: 1),
+            //       ),
+            //       focusedBorder: OutlineInputBorder(
+            //         borderRadius: BorderRadius.circular(50),
+            //         borderSide: BorderSide(color: Colors.transparent, width: 1),
+            //       ),
+            //     fillColor: ColorThemes.inputFieldBackground2,
+            //     filled: true,
+            //     hintText: 'Search recipes . . .',
+            //     hintStyle: TextStyle(
+            //       color: ColorThemes.textSecondary,
+            //       fontSize: FontSizeThemes.mediumFont
+            //     ),
+            //     suffixIcon: IconButton(onPressed: (){}, icon: Icon(Icons.search_rounded, color: ColorThemes.primaryAccent,))
+            //   ),
+            // ),
             const SizedBox(height: 20,),
             DefaultTabController(
               length: tabs.length,
@@ -173,7 +174,7 @@ class _RecipePageState extends State<RecipePage> {
                                   context.read<RecipeViewBloc>().add(FavoritePressed(favoriteModel: favorite));
                                 }
                               },
-                              user: widget.user,
+                              user: widget.user, supabaseClient: widget.supabaseClient,
                             ),
                             const SizedBox(height: 10,),
                             SizedBox(

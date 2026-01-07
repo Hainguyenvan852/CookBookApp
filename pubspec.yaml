@@ -38,6 +38,9 @@ dependencies:
   pinput: ^5.0.0
   shimmer: ^3.0.0
   buttons_tabbar: ^1.3.15
+  social_sharing_plus: ^1.2.3
+  google_sign_in: ^7.2.0
+  image_picker: ^1.2.1
 
 dev_dependencies:
   flutter_test:
@@ -60,13 +63,30 @@ flutter:
   assets:
     - .env
 
-    - lib/core/icons/chef.svg
-    - lib/core/icons/chef-hat.svg
+    - lib/assets/icons/chef.svg
+    - lib/assets/icons/chef-hat.svg
 
-    - lib/core/images/login-image.png
-    - lib/core/images/login-image-2.png
-    - lib/core/images/login-image-3.png
-    - lib/core/images/avatar-people.svg
+    - lib/assets/images/login-image.png
+    - lib/assets/images/login-image-2.png
+    - lib/assets/images/login-image-3.png
+    - lib/assets/images/avatar-people.svg
+
+    - lib/assets/ui_pictures/login.png
+    - lib/assets/ui_pictures/signup.png
+    - lib/assets/ui_pictures/about-us.png
+    - lib/assets/ui_pictures/change-password.png
+    - lib/assets/ui_pictures/complete.png
+    - lib/assets/ui_pictures/cooking-step.png
+    - lib/assets/ui_pictures/detail.png
+    - lib/assets/ui_pictures/forgot-password.png
+    - lib/assets/ui_pictures/home-1.png
+    - lib/assets/ui_pictures/home-2.png
+    - lib/assets/ui_pictures/notification.png
+    - lib/assets/ui_pictures/preparation.png
+    - lib/assets/ui_pictures/profile.png
+    - lib/assets/ui_pictures/saved.png
+    - lib/assets/ui_pictures/search.png
+    - lib/assets/ui_pictures/signup-with-google.png
 
   # fonts:
   #   - family: Schyler

@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recipe_finder_app/features/auth/data/models/user_model.dart';
-import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view_bloc.dart';
-import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view_state.dart';
+import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view/recipe_view_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/themes/main_theme.dart';
 import '../../data/models/favorite_model.dart';
 import '../../data/models/recipe_model.dart';
-import '../bloc/recipe_view_event.dart';
+import '../bloc/recipe_view/recipe_view_event.dart';
+import '../bloc/recipe_view/recipe_view_state.dart';
 import '../widgets/recipe_card_type_4.dart';
 
 class FavoriteRecipePage extends StatefulWidget {
-  const FavoriteRecipePage({super.key, required this.user});
+  const FavoriteRecipePage({super.key, required this.user, required this.supabaseClient});
   final UserModel user;
+  final SupabaseClient supabaseClient;
 
   @override
   State<FavoriteRecipePage> createState() => _FavoriteRecipePageState();
@@ -59,9 +61,9 @@ class _FavoriteRecipePageState extends State<FavoriteRecipePage> {
                     builder: (context){
                       return Column(
                         children: [
-                          _buildSearchAndFilter(recipeNumber: state.favoriteList.length),
+                          _buildSearchAndFilter(recipeNumber: state.favoriteListByFilter.length),
                           const SizedBox(height: 20,),
-                          _buildRecipeList(recipes: state.favoriteList)
+                          _buildRecipeList(recipes: state.favoriteListByFilter)
                         ],
                       );
                     }
@@ -96,33 +98,6 @@ class _FavoriteRecipePageState extends State<FavoriteRecipePage> {
   }){
     return Column(
       children: [
-        TextFormField(
-          cursorColor: ColorThemes.primaryAccent,
-          style: TextStyle(
-            color: Colors.white
-          ),
-          decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(50),
-                borderSide: BorderSide(color: Colors.transparent, width: 1),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(50),
-                borderSide: BorderSide(color: Colors.transparent, width: 1),
-              ),
-              fillColor: ColorThemes.inputFieldBackground2,
-              filled: true,
-              hintText: 'Search recipes . . .',
-              hintStyle: TextStyle(
-                  color: ColorThemes.textSecondary,
-                  fontSize: FontSizeThemes.mediumFont
-              ),
-              prefixIcon: Icon(Icons.search_rounded, color: ColorThemes.primaryAccent,),
-              suffixIcon: IconButton(onPressed: (){}, icon: Icon(Icons.mic, color: ColorThemes.textSecondary,))
-          ),
-        ),
-
-        const SizedBox(height: 20,),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -136,7 +111,47 @@ class _FavoriteRecipePageState extends State<FavoriteRecipePage> {
               ),
             ),
             GestureDetector(
-              onTap: (){},
+              onTap: (){
+                showMenu(
+                  color: Colors.black38,
+                  position: RelativeRect.fromLTRB(10, 130, 0, 0),
+                  context: context,
+                  items: [
+                    PopupMenuItem(
+                        child: TextButton(
+                            onPressed: (){
+                              context.read<RecipeViewBloc>().add(FilterFavoriteListPressed('all'));
+                            },
+                            child: Text('Tất cả', style: TextStyle(color: Colors.white),)
+                        )
+                    ),
+                    PopupMenuItem(
+                      child: TextButton(
+                        onPressed: (){
+                          context.read<RecipeViewBloc>().add(FilterFavoriteListPressed('breakfast'));
+                        },
+                        child: Text('Breakfast', style: TextStyle(color: Colors.white),)
+                      )
+                    ),
+                    PopupMenuItem(
+                        child: TextButton(
+                          onPressed: () {
+                            context.read<RecipeViewBloc>().add(FilterFavoriteListPressed('lunch'));
+                          },
+                          child: Text('Lunch', style: TextStyle(color: Colors.white),)
+                        )
+                    ),
+                    PopupMenuItem(
+                        child: TextButton(
+                          onPressed: () {
+                            context.read<RecipeViewBloc>().add(FilterFavoriteListPressed('dinner'));
+                          },
+                          child: Text('Dinner', style: TextStyle(color: Colors.white),)
+                        )
+                    )
+                  ]
+                );
+              },
               child: Row(
                 children: [
                   Text(
@@ -184,6 +199,7 @@ class _FavoriteRecipePageState extends State<FavoriteRecipePage> {
                   }
                 },
                 user: widget.user,
+                supabaseClient: widget.supabaseClient,
               ),
               const SizedBox(height: 10,),
               Text(

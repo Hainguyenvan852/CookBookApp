@@ -66,8 +66,8 @@ class CompletionScreen extends StatelessWidget {
                             color: ColorThemes.primaryAccent,
                             boxShadow: [
                               BoxShadow(
-                                color: ColorThemes.primaryAccent.withOpacity(0.4),
-                                blurRadius: 15,
+                                color: ColorThemes.primaryAccent.withOpacity(0.2),
+                                blurRadius: 5,
                                 spreadRadius: 5,
                               )
                             ],
@@ -138,10 +138,10 @@ class CompletionScreen extends StatelessWidget {
                             },
                           ),
                           const SizedBox(height: 10),
-                          GestureDetector(
-                            onTap: (){},
-                            child: Icon(Icons.camera_alt_outlined, color: Colors.white.withOpacity(0.6), size: 20),
-                          )
+                          // GestureDetector(
+                          //   onTap: (){},
+                          //   child: Icon(Icons.camera_alt_outlined, color: Colors.white.withOpacity(0.6), size: 20),
+                          // )
                         ],
                       ),
                     ),
@@ -152,7 +152,37 @@ class CompletionScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: OutlinedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (_){
+                                    return AlertDialog(
+                                      title: Text('Your review has sent', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),),
+                                      iconPadding: EdgeInsets.only(top: 60, bottom: 20),
+                                      actions: [
+                                        ElevatedButton(
+                                            onPressed: () => Navigator.pop(context),
+                                            style: ElevatedButton.styleFrom(
+                                              minimumSize: Size(double.infinity, 40),
+                                              maximumSize: Size(double.infinity, 40),
+                                            ),
+                                            child: Text('OK')
+                                        )
+                                      ],
+                                      actionsAlignment: MainAxisAlignment.center,
+                                      backgroundColor: ColorThemes.backgroundColor,
+                                      icon: Container(
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: ColorThemes.primaryAccent.withOpacity(0.2),
+                                        ),
+                                        child: Icon(Icons.check_circle, color: ColorThemes.primaryAccent, size: 25,),
+                                      ),
+                                    );
+                                  }
+                                );
+                              },
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(color: Colors.white.withOpacity(0.2)),
                                 padding: const EdgeInsets.symmetric(vertical: 18),

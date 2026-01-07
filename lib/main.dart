@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:recipe_finder_app/core/themes/main_theme.dart';
 import 'package:recipe_finder_app/core/themes/scroll_behavior.dart';
@@ -18,10 +19,10 @@ import 'package:recipe_finder_app/features/view_recipe/data/datasources/favorite
 import 'package:recipe_finder_app/features/view_recipe/data/datasources/recipe_remote_datasource.dart';
 import 'package:recipe_finder_app/features/view_recipe/data/repositories/favorite_repository_impl.dart';
 import 'package:recipe_finder_app/features/view_recipe/data/repositories/recipe_repository_ipml.dart';
-import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view_bloc.dart';
-import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view_event.dart';
+import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view/recipe_view_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'features/view_recipe/presentation/bloc/recipe_view/recipe_view_event.dart';
 import 'features/view_recipe/presentation/pages/navigator_page.dart';
 
 Future<void> main() async{
@@ -36,6 +37,17 @@ Future<void> main() async{
     anonKey: publicKey,
   );
 
+  const webClientId = '496781120744-dkknrtg7s1cpsckqsh8atc1afoh38l89.apps.googleusercontent.com';
+
+  const androidClientId = '496781120744-s7qda91ibqo7uk9ufm59bc6030giv822.apps.googleusercontent.com';
+
+  final googleSignIn = GoogleSignIn.instance;
+
+  await googleSignIn.initialize(
+    serverClientId: webClientId,
+    clientId: androidClientId,
+  );
+
   PlatformDispatcher.instance.onError = (error, stack) {
     if (error is AuthException) {
       if (error.statusCode == 'otp_expired' || error.code == 'access_denied') {
@@ -47,12 +59,13 @@ Future<void> main() async{
     return false;
   };
 
-  runApp(MyApp(supabaseClient: Supabase.instance.client,));
+  runApp(MyApp(supabaseClient: Supabase.instance.client, googleSignIn: googleSignIn,));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key, required this.supabaseClient});
+  const MyApp({super.key, required this.supabaseClient, required this.googleSignIn});
   final SupabaseClient supabaseClient;
+  final GoogleSignIn googleSignIn;
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -70,7 +83,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _authRemoteData = AuthRemoteDataSource(widget.supabaseClient);
+    _authRemoteData = AuthRemoteDataSource(supabaseClient:  widget.supabaseClient, googleSignIn: widget.googleSignIn);
     _authRepo = AuthRepositoryImpl(_authRemoteData);
 
     _favoriteRemoteDatasource = FavoriteRemoteDatasource(supabaseClient: widget.supabaseClient);

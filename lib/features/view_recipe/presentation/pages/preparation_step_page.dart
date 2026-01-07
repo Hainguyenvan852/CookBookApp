@@ -1,13 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_finder_app/core/themes/main_theme.dart';
+import 'package:recipe_finder_app/features/view_recipe/data/models/ingredient_model.dart';
+import 'package:recipe_finder_app/features/view_recipe/data/models/step_model.dart';
 
 import '../../data/models/recipe_model.dart';
 import 'cooking_step_page.dart';
 
 class PreparationScreen extends StatelessWidget {
-  const PreparationScreen({super.key, required this.recipe});
+  const PreparationScreen({super.key, required this.recipe, required this.ingredientList, required this.stepList});
   final RecipeModel recipe;
+  final List<IngredientModel> ingredientList;
+  final List<StepModel> stepList;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +35,7 @@ class PreparationScreen extends StatelessWidget {
       bottomNavigationBar: Container(
         padding: const EdgeInsets.only(left: 20, right: 20, bottom: 30, top: 20),
         child: ElevatedButton(
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => CookingModeScreen(recipe: recipe,),)),
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => CookingModeScreen(recipe: recipe, stepList: stepList,),)),
           style: ElevatedButton.styleFrom(
             backgroundColor: ColorThemes.primaryAccent,
             foregroundColor: Colors.black,
@@ -90,7 +94,7 @@ class PreparationScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          "8 items to prep",
+                          "${ingredientList.length} items to prep",
                           style: TextStyle(
                               color: ColorThemes.primaryAccent,
                               fontSize: 12,
@@ -105,24 +109,16 @@ class PreparationScreen extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            ListView(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              children: [
-                _buildIngredientTile("Rice Noodles", "500g, flat dry style", ColorThemes.cardBackground),
-                _buildIngredientTile("Beef Sirloin", "200g, thinly sliced", ColorThemes.cardBackground),
-                _buildIngredientTile("White Onion", "1 large, sliced", ColorThemes.cardBackground),
-                _buildIngredientTile("Fresh Ginger", "3 inch piece, charred", ColorThemes.cardBackground),
-                _buildIngredientTile("Spices", "Star anise, cinnamon stick", ColorThemes.cardBackground),
-                _buildIngredientTile("Beef Bones", "1kg, for broth", ColorThemes.cardBackground),
-                _buildIngredientTile("Fish Sauce", "2 tablespoons", ColorThemes.cardBackground),
-                _buildIngredientTile("Herbs", "Basil, mint, cilantro", ColorThemes.cardBackground),
-                const SizedBox(height: 20),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                children: ingredientList.map((ingredient) => _buildIngredientTile(ingredient.name, ingredient.amount.toString(), ColorThemes.cardBackground),).toList(),
+              ),
             ),
+
+            const SizedBox(height: 20),
           ],
-        ),
+        )
       ),
     );
   }

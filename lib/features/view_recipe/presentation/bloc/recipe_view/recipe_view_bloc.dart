@@ -2,8 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recipe_finder_app/features/view_recipe/data/models/recipe_model.dart';
 import 'package:recipe_finder_app/features/view_recipe/data/repositories/favorite_repository_impl.dart';
 import 'package:recipe_finder_app/features/view_recipe/data/repositories/recipe_repository_ipml.dart';
-import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view_event.dart';
-import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view_state.dart';
+import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view/recipe_view_event.dart';
+import 'package:recipe_finder_app/features/view_recipe/presentation/bloc/recipe_view/recipe_view_state.dart';
 
 class RecipeViewBloc extends Bloc<RecipeViewEvent, RecipeViewState>{
   final RecipeRepositoryIpml recipeRepo;
@@ -17,6 +17,7 @@ class RecipeViewBloc extends Bloc<RecipeViewEvent, RecipeViewState>{
       List<RecipeModel> newlyList = [];
       List<RecipeModel> todayList = [];
       List<RecipeModel> favoriteList = [];
+      List<RecipeModel> favoriteListByFilter = [];
       List<RecipeModel> allList = [];
       String error = '';
 
@@ -26,6 +27,7 @@ class RecipeViewBloc extends Bloc<RecipeViewEvent, RecipeViewState>{
           if(recipes.isNotEmpty){
 
             favoriteList = recipes.where((recipe) => recipe.isFavorite == true).toList();
+            favoriteListByFilter = favoriteList;
 
             recipes.shuffle();
             todayList = recipes.take(7).toList();
@@ -40,7 +42,7 @@ class RecipeViewBloc extends Bloc<RecipeViewEvent, RecipeViewState>{
       );
 
       if(error.isEmpty){
-        emit(state.copyWith(allRecipeList: allList, newlyRecipeList: newlyList, favoriteList: favoriteList, todayRecipeList: todayList, isLoading: false));
+        emit(state.copyWith(allRecipeList: allList, newlyRecipeList: newlyList, favoriteList: favoriteList, favoriteListByFilter: favoriteListByFilter, todayRecipeList: todayList, isLoading: false));
       }else{
         emit(state.copyWith(error: error, isLoading: false));
       }
@@ -55,6 +57,18 @@ class RecipeViewBloc extends Bloc<RecipeViewEvent, RecipeViewState>{
           add(LoadRecipe());
         }
       );
+    });
+
+    on<FilterFavoriteListPressed>((event, emit) async{
+      List<RecipeModel> filterList = [];
+
+      if(event.filter.toLowerCase() == 'all'){
+        filterList = state.favoriteList;
+      } else{
+        filterList = state.favoriteList.where((recipe) => recipe.repast.toLowerCase() == event.filter.toLowerCase()).toList();
+      }
+
+      emit(state.copyWith(favoriteListByFilter: filterList));
     });
 
     on<NoFavoritePressed>((event, emit) async{

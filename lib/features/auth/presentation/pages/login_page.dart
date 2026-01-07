@@ -23,7 +23,7 @@ class LoginPage extends StatelessWidget {
               shape: BoxShape.circle,
               color: ColorThemes.iconBackground
           ),
-          child: SvgPicture.asset("lib/core/icons/chef-hat.svg"),
+          child: SvgPicture.asset("lib/assets/icons/chef-hat.svg"),
         ),
         title: Text(
           'CookBook',

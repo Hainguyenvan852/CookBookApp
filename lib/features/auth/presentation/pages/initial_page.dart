@@ -21,7 +21,7 @@ class _InitialPageState extends State<InitialPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset("lib/core/icons/chef-hat.svg", width: 150,),
+            SvgPicture.asset("lib/assets/icons/chef-hat.svg", width: 150,),
             SizedBox(height: 40,),
             Text(
               'Recipe Finder',

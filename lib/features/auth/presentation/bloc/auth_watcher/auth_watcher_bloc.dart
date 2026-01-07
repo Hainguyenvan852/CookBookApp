@@ -20,10 +20,6 @@ class AuthWatcherBloc extends Bloc<AuthWatcherEvent, AuthWatcherState>{
         add(AuthCheckedState(session));
       }
 
-      if(event == AuthChangeEvent.initialSession){
-        add(AuthCheckedState(session));
-      }
-
       if(event == AuthChangeEvent.signedIn){
         add(AuthLogIn(session));
       }
@@ -43,7 +39,6 @@ class AuthWatcherBloc extends Bloc<AuthWatcherEvent, AuthWatcherState>{
       }
       else{
         final user = await authRepo.getSignedInUser(event.session!.user.id);
-
         emit(Authenticated(user, event.session!));
       }
     });

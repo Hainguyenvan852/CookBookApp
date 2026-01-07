@@ -2,17 +2,19 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../auth/data/models/user_model.dart';
 import '../../data/models/recipe_model.dart';
-import '../bloc/recipe_view_bloc.dart';
+import '../bloc/recipe_view/recipe_view_bloc.dart';
 import '../pages/recipe_detail_page.dart';
 
 class RecipeCardType4 extends StatelessWidget {
-  const RecipeCardType4({super.key, required this.recipe, required this.onPressed, required this.user});
+  const RecipeCardType4({super.key, required this.recipe, required this.onPressed, required this.user, required this.supabaseClient});
   final RecipeModel recipe;
   final VoidCallback onPressed;
   final UserModel user;
+  final SupabaseClient supabaseClient;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class RecipeCardType4 extends StatelessWidget {
           context,
           MaterialPageRoute(builder: (_) => BlocProvider.value(
             value: context.read<RecipeViewBloc>(),
-            child: RecipeDetailPage(recipe: recipe, user: user,),
+            child: RecipeDetailPage(recipe: recipe, user: user, supabaseClient: supabaseClient,),
           ))
       ),
       child: SizedBox(

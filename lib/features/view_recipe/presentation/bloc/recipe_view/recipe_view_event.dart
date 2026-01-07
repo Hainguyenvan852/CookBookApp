@@ -13,3 +13,8 @@ class NoFavoritePressed extends RecipeViewEvent{
   final FavoriteModel favoriteModel;
   NoFavoritePressed({required this.favoriteModel});
 }
+
+class FilterFavoriteListPressed extends RecipeViewEvent{
+  String filter;
+  FilterFavoriteListPressed(this.filter);
+}

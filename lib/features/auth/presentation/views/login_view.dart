@@ -111,7 +111,7 @@ class _LoginViewState extends State<LoginView> {
                       Center(
                         child: ElevatedButton(
                             onPressed: _canSubmit ? (){
-                              _loginAction(context);
+                              _loginWithEmailAction(context);
                             } : (){},
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: ColorThemes.primaryAccent,
@@ -159,7 +159,9 @@ class _LoginViewState extends State<LoginView> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           ElevatedButton.icon(
-                            onPressed: (){},
+                            onPressed: (){
+                              _loginWithGoogleAction(context);
+                            },
                             icon: Icon(FontAwesomeIcons.google, color: ColorThemes.textPrimary, size: 16,),
                             label: Text(
                               'Google',
@@ -230,6 +232,10 @@ class _LoginViewState extends State<LoginView> {
   }
 }
 
-void _loginAction(BuildContext context) {
-  context.read<AuthFormBloc>().add(SignInPressed());
+void _loginWithEmailAction(BuildContext context) {
+  context.read<AuthFormBloc>().add(SignInPressedWithEmail());
+}
+
+void _loginWithGoogleAction(BuildContext context) {
+  context.read<AuthFormBloc>().add(SignInPressedWithGoogle());
 }

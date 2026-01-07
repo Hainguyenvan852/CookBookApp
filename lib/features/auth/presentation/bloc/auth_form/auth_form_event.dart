@@ -25,7 +25,9 @@ class ResendOtp extends AuthFormEvent{
   ResendOtp(this.email);
 }
 
-class SignInPressed extends AuthFormEvent{}
+class SignInPressedWithEmail extends AuthFormEvent{}
+
+class SignInPressedWithGoogle extends AuthFormEvent{}
 
 class SignUpPressed extends AuthFormEvent{}
 

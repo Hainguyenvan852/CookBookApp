@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:recipe_finder_app/core/failure.dart';
+import 'package:recipe_finder_app/core/errors/failure.dart';
 
 class AuthFormState {
   String email;
