@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -24,6 +26,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'features/view_recipe/presentation/bloc/recipe_view/recipe_view_event.dart';
 import 'features/view_recipe/presentation/pages/navigator_page.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +38,10 @@ Future<void> main() async{
   await Supabase.initialize(
     url: supabaseUrl,
     anonKey: publicKey,
+  );
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
 
   const webClientId = '496781120744-dkknrtg7s1cpsckqsh8atc1afoh38l89.apps.googleusercontent.com';
@@ -90,6 +97,13 @@ class _MyAppState extends State<MyApp> {
     _recipeRemoteDataSource = RecipeRemoteDataSource(supabaseClient: widget.supabaseClient, favoriteDatasource: _favoriteRemoteDatasource);
     _recipeRepo = RecipeRepositoryIpml(datasource: _recipeRemoteDataSource);
     _favoriteRepositoryImpl = FavoriteRepositoryImpl(datasource: _favoriteRemoteDatasource);
+
+    FirebaseMessaging.onMessage.listen((payload){
+      final notifications = payload.notification;
+      if(notifications != null){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${notifications.title} - ${notifications.body}')));
+      }
+    });
   }
 
   @override

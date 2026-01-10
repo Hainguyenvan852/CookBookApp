@@ -103,6 +103,16 @@ class AuthRepositoryImpl implements AuthRepository{
       return Left(AuthFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, String>> saveFcmToken(String fcmToken) async {
+    try{
+      dataSource.insertFcmToken(fcmToken);
+      return Right('success');
+    } catch(e){
+      return Left(QueryFailure(e.toString()));
+    }
+  }
 }
 
 String messageFailure(Object e) {

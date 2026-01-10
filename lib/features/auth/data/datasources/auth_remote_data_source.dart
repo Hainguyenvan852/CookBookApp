@@ -110,4 +110,11 @@ class AuthRemoteDataSource {
 
     return UserModel.fromJson(query);
   }
+
+  Future<void> insertFcmToken(String fcmToken) async{
+    await supabaseClient.from('Profiles').upsert({
+      'id': supabaseClient.auth.currentUser!.id,
+      'fcm_token': fcmToken
+    });
+  }
 }

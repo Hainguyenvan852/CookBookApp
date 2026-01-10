@@ -14,4 +14,5 @@ abstract class AuthRepository {
   Future<Either<Failure, ResendResponse>> resendOtp(String email);
   Future<Either<Failure, UserResponse>> changePassword(String password);
   Future<Either<Failure, String>> recoveryPassword(String email);
+  Future<Either<Failure, String>> saveFcmToken(String fcmToken);
 }

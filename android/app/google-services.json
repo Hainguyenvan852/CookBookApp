@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "820829991830",
+    "project_id": "cookbook-app-9ed77",
+    "storage_bucket": "cookbook-app-9ed77.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820829991830:android:244bb495f80c699c4223b7",
+        "android_client_info": {
+          "package_name": "com.example.recipe_finder_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJ7AmRVcgq_JKWVWz8HOcUUJWfZhoC4Bk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

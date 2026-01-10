@@ -1,6 +1,9 @@
 import 'dart:async';
 
+import 'package:dartz/dartz.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:recipe_finder_app/core/errors/failure.dart';
 import 'package:recipe_finder_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:recipe_finder_app/features/auth/presentation/bloc/auth_watcher/auth_watcher_event.dart';
 import 'package:recipe_finder_app/features/auth/presentation/bloc/auth_watcher/auth_watcher_state.dart';
@@ -12,7 +15,7 @@ class AuthWatcherBloc extends Bloc<AuthWatcherEvent, AuthWatcherState>{
   late final StreamSubscription<AuthState> _authSub;
 
   AuthWatcherBloc(this.authRepo) : super(AuthWatcherInitial()){
-    _authSub = authRepo.onStateChanged.listen((data){
+    _authSub = authRepo.onStateChanged.listen((data) async{
       final AuthChangeEvent event = data.event;
       final session = data.session;
 
@@ -21,6 +24,15 @@ class AuthWatcherBloc extends Bloc<AuthWatcherEvent, AuthWatcherState>{
       }
 
       if(event == AuthChangeEvent.signedIn){
+
+        await FirebaseMessaging.instance.requestPermission();
+
+        await FirebaseMessaging.instance.getAPNSToken();
+        final fcmToken = await FirebaseMessaging.instance.getToken();
+        if(fcmToken != null){
+          await _setFcmToken(fcmToken);
+        }
+
         add(AuthLogIn(session));
       }
 
@@ -31,6 +43,10 @@ class AuthWatcherBloc extends Bloc<AuthWatcherEvent, AuthWatcherState>{
       if(event == AuthChangeEvent.passwordRecovery){
         add(AuthRecoveryPassword());
       }
+    });
+
+    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async{
+      await _setFcmToken(fcmToken);
     });
 
     on<AuthCheckedState>((event, emit) async{
@@ -57,7 +73,26 @@ class AuthWatcherBloc extends Bloc<AuthWatcherEvent, AuthWatcherState>{
       emit(RequestRecoveryPassword());
     });
   }
+
+  Future<String> _setFcmToken(String fcmToken) async{
+    String rs = '';
+
+    final result = await authRepo.saveFcmToken(fcmToken);
+
+    result.fold(
+      (fail) {
+        rs = fail.message;
+      },
+      (s) {
+        rs = 'success';
+      }
+    );
+
+    return rs;
+  }
 }
+
+
 
 
 
